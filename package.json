@@ -1,0 +1,9 @@
+{
+  "name": "learn_vue",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "rollup": "^2.45.2"
+  }
+}
