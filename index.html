@@ -14,18 +14,16 @@
             data(){
                 return {
                     name:'gzy',
-                    info:{
-                        address:"Beijing",
-                        phone:10086
-                    }
+                    arr:[{a:1}]
                 }
             }
         })
-        vm.info = {
-            a : 1
-        }
-        console.log(vm.info)
-        console.log(vm.name)
+        // vm.info = {
+        //     a : 1
+        // }
+        vm.arr.push(5);
+        vm.arr.push({b:2}) ; 
+        console.log(vm)
     </script>
 </body>
 </html>
