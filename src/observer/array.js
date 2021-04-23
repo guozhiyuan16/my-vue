@@ -17,9 +17,21 @@ let methods = [
 
 methods.forEach(method=>{
     arrayMethods[method] = function(...args){
-        console.log('数据刷新');
         let result = oldArrayMethods[method].apply(this,args);
-
+        let insert;
+        let ob = this.__ob__; // 这次this 是监控的那个数组
+        switch (method){
+            case "push":
+            case "unshift":
+                insert = args;
+                break;
+            case "splice":
+                insert = args.slice(2); // 第三个以后是新增的
+                break;
+            default:
+                break;
+        }
+        if(insert) ob.observeArray(insert) // 数组新增的值有可能是对象 也需要深层监控 （调用 Observe中的 arrayObserve 监控）
         return result;
     }
 })
