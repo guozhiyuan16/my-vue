@@ -7,14 +7,30 @@
     <title>Document</title>
 </head>
 <body>
-    
+    <!-- 
+        模板的编译原理 AST语法树  先表示出html来 -> js语法
+
+        1.需要将模板变成render方法
+          为甚么不用模板直接替换？ 指令无法解析
+        2. 需要去当前的实例上取值  with
+        3. 虚拟dom -> 对象 可以描述dom结构 （diff算法）
+        4. 生成一个真实的dom扔到页面中
+     -->
+    <div id="app">
+        <ul> 
+            <li>{{ name }}</li>
+            <li>{{ age }}</li>
+        </ul>
+    </div>
     <script src="dist/vue.js"></script>
     <script>
         let vm = new Vue({
+            el:"#app",
             data(){
                 return {
                     name:'gzy',
-                    arr:[{a:1}]
+                    // arr:[{a:1}]
+                    age:10
                 }
             }
         })
