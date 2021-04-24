@@ -1,11 +1,12 @@
 import { initState } from './state'
-export  function initMinin(Vue){
-   
+import { compileToFunctions } from './compiler/index.js'
+export  function initMixin(Vue){
+
     Vue.prototype._init = function(options){
         const vm = this;
         vm.$options = options;
 
-        // 初始化状态（讲数据做一个初始化的劫持 当数据改变更新视图）
+        // 初始化状态（将数据做一个初始化的劫持 当数据改变更新视图）
         // 对数据进行初始化 watch computed props data
         initState(vm);
 
@@ -27,8 +28,7 @@ export  function initMinin(Vue){
             if(!template && el){
                 template = el.outerHTML;
             }
-            console.log(template)
-            // 如何将模板编译成函数
+            // 如何将模板编译成render函数
             const render = compileToFunctions(template);
             options.render = render; // 保证render一定有
         }
