@@ -6,7 +6,6 @@ const endTag = new RegExp(`^<\\/${qnameCapture}[^>]*>`); // 匹配标签结尾�
 //                aa  = " xxx "   | ' xxx '  |   xxx
 const attribute = /^\s*([^\s"'<>\/=]+)(?:\s*(=)\s*(?:"([^"]*)"+|'([^']*)'+|([^\s"'=<>`]+)))?/; // 匹配属性的    aaa="aaa"  a='aaa'   a=aaa
 const startTagClose = /^\s*(\/?)>/; // 匹配标签结束的 >    >   <div></div>  <br/>
-const defaultTagRE = /\{\{((?:.|\r?\n)+?)\}\}/g;
 
 // compileToFunctions(`<div id="app" a='1' b = 2>
 //     <div a=1 b=2>
@@ -33,7 +32,6 @@ export function parseHtml(html){
     // 通过这三个方法解析成ast 树
     function start(tagName,attrs){
         let element = createASTElement(tagName,attrs);
-        console.log(element)
         if(!root){ // 根元素
             root = element
         }

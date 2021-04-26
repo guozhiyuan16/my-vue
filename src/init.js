@@ -31,6 +31,8 @@ export  function initMixin(Vue){
             // 如何将模板编译成render函数
             const render = compileToFunctions(template);
             options.render = render; // 保证render一定有
+
+            console.log(options.render);
         }
     }
 }

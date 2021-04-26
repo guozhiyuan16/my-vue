@@ -16,10 +16,8 @@
         3. 虚拟dom -> 对象 可以描述dom结构 （diff算法）
         4. 生成一个真实的dom扔到页面中
      -->
-    <div id="app">
-        <div a=1 b=2>
-            <span>{{ name }}</span>
-        </div>
+    <div id="app" a=1 b=2 style="color: red;">
+        <span style="color: red;">{{ name }} hh {{ age }} pp<a>hello</a></span>
     </div>
     <script src="dist/vue.js"></script>
     <script>
