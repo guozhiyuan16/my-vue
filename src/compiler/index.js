@@ -11,8 +11,8 @@ export function compileToFunctions(template){
     
     // 生成render 函数
     let render = `with(this){return ${code}}`
-    console.log('render',render);
+    
     let fn = new Function(render); // 把一个字符串变成一个函数
-    console.log('fn',fn);
+    
     return fn
 }
