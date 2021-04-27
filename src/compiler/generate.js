@@ -29,7 +29,7 @@ function genProps(attrs){
             })
             attr.value = obj;
         }
-        str += `${attr.name}:${JSON.stringify(attr.value)}`
+        str += `${attr.name}:${JSON.stringify(attr.value)},`
     }
     return `{${str.slice(0,-1)}}`
 }
@@ -81,9 +81,9 @@ export function generate(el){
 
     let code = `_c("${el.tag}",${
         el.attrs.length? genProps(el.attrs):'undefined'
-    })${
+    }${
         children? ','+ children : ''
-    }`
+    })`
 
     return code;
 }
