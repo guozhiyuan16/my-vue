@@ -20,6 +20,8 @@ export  function initMixin(Vue){
         el = document.querySelector(el);
         const vm = this;
         const options = vm.$options;
+
+        vm.$options.el = el;
         // 三种挂载方式
         // 1) render 有render直接使用
         // 2) template 没有render看template

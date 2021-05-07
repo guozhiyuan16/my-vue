@@ -1,10 +1,14 @@
+import { patch } from "./vdom/patch";
 import Watcher from "./watcher"
 
 export function lifecycleMixin(Vue){
-    Vue.prototype._update = function(){
-        console.log('_update')
+    // 将虚拟节点转为真实的dom
+    Vue.prototype._update = function(vnode){
+       const vm = this;
+       // 首次渲染 需要用虚拟节点，来更新真实的dom
+        vm.$el = patch(vm.$options.el,vnode)
     }
-}
+} 
 
 export function mountComponent(vm,el){
     // 默认vue 是通过watcher来渲染的  渲染watcher （每一个组件都有一个渲染watcher）
