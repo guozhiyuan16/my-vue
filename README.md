@@ -29,4 +29,9 @@
 - 虚拟dom渲染到页面
 
 > 20210509
-- 数据劫持 & dom转化的 总结
+- 数据劫持 总结
+- 初次渲染 总结 
+    - 对数据进行拦截 对象 数组 （依赖收集）
+    - template模板 => ast 语法树（描述语法的）=> render 函数 => 虚拟dom
+    - new Vue时会产生一个watcher(渲染watcher) vm._update(vm._render()) 创建真实节点
+- 对象的依赖收集

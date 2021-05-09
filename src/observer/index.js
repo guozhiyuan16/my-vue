@@ -1,4 +1,5 @@
 import { arrayMethods } from './array.js'
+import Dep from "../dep";
 // 专门用来监控数据变化的类
 class Observer{
     constructor(value){
@@ -35,14 +36,20 @@ class Observer{
 
 function defineReactive(target,key,value){
     observe(value); // 深层监控
-    Object.defineProperty(target,key,{
+    let dep = new Dep(); // 每次都会给属性创建一个dep
+    Object.defineProperty(target,key,{ // 需要给每个属性都增加一个dep
         get(){
+            if(Dep.target){
+                dep.depend(); // 让这个属性自己的dep记住这个watcher，也要让watcher记住这个dep
+            }
             return value
         },
         set(newValue){
             if(value!=newValue){
                 observe(newValue); // 直接赋值为一个新对象需要监控
-                value = newValue
+                value = newValue;
+
+                dep.notify();
             }
         }
     })

@@ -22,6 +22,8 @@
     <div id="app">
         <ul>
             <li style="color:aqua">{{ name }}</li>
+            <li style="color:aqua">{{ name }}</li>
+            <li style="color:aqua">{{ name }}</li>
             <li style="color:blueviolet">{{ age }} </li>
         </ul>
     </div>
@@ -34,7 +36,8 @@
                 return {
                     name:'gzy',
                     // arr:[{a:1}]
-                    age:10
+                    age:10,
+                    address:'Beijing'
                 }
             }
         })
@@ -43,10 +46,19 @@
         // }
         // vm.arr.push(5);
         // vm.arr.push({b:2}); // 对push的对象也要监控
-        console.log('vm',vm);
-        console.log('----------------------------')
-        console.log('Vue.prototype',Vue.prototype);
 
+        // console.log('vm',vm);
+        // console.log('----------------------------')
+        // console.log('Vue.prototype',Vue.prototype);
+
+        // 希望数据更新自动更新视图，而不是用户手动触发
+        //vm.address = "ggg"
+        //vm._update(vm._render()) // 强制更新的方法
+
+        setTimeout(()=>{
+            vm.name = 'ggg';
+            vm.age = 22;
+        },1000)
     </script>
 </body>
 </html>
