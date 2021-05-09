@@ -11,7 +11,7 @@
         模板的编译原理 AST语法树  先表示出html来 -> js语法
 
         1.需要将模板变成render方法
-          为甚么不用模板直接替换？ 指令无法解析
+          为什么不用模板直接替换？ 指令无法解析
         2. 需要去当前的实例上取值  with
         3. 虚拟dom -> 对象 可以描述dom结构 （diff算法）
         4. 生成一个真实的dom扔到页面中
@@ -43,7 +43,10 @@
         // }
         // vm.arr.push(5);
         // vm.arr.push({b:2}); // 对push的对象也要监控
-        console.log(vm)
+        console.log('vm',vm);
+        console.log('----------------------------')
+        console.log('Vue.prototype',Vue.prototype);
+
     </script>
 </body>
 </html>

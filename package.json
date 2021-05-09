@@ -12,5 +12,8 @@
     "rollup": "^2.45.2",
     "rollup-plugin-babel": "^4.4.0",
     "rollup-plugin-server": "^0.7.0"
+  },
+  "dependencies": {
+    "vue": "^2.6.12"
   }
 }

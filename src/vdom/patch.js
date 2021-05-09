@@ -1,5 +1,4 @@
 export function patch(oldVnode,vnode){ // oldVnode 是一个真实的元素
-    console.log(oldVnode,vnode)
     const isRealElement = oldVnode.nodeType;
 
     if(isRealElement){
