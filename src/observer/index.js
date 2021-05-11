@@ -1,5 +1,5 @@
 import { arrayMethods } from './array.js'
-import Dep from "../dep";
+import Dep from "./dep";
 // 专门用来监控数据变化的类
 class Observer{
     constructor(value){
@@ -49,7 +49,7 @@ function defineReactive(target,key,value){
                 observe(newValue); // 直接赋值为一个新对象需要监控
                 value = newValue;
 
-                dep.notify();
+                dep.notify();// 通知dep中记录的watcher让他去执行
             }
         }
     })

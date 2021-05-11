@@ -9,7 +9,7 @@ class Dep{
         // 让watcher记住dep
         Dep.target.addDep(this);
     }
-    addSub(watcher){ // 存储watcher
+    addSub(watcher){ // dep记住watcher
         this.subs.push(watcher);
     }
     notify(){

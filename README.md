@@ -34,4 +34,9 @@
     - 对数据进行拦截 对象 数组 （依赖收集）
     - template模板 => ast 语法树（描述语法的）=> render 函数 => 虚拟dom
     - new Vue时会产生一个watcher(渲染watcher) vm._update(vm._render()) 创建真实节点
-- 对象的依赖收集
+- 对象的依赖收集 （只有在dom中取过值的元素发生变化才触发视图刷新）
+    - 取值的时候给每个值新增一个dep,并且让dep记住这个watcher（也会让watcher记住dep，并且在watcher中去重）
+    - 设置值得时候通知dep中记录的watcher让其执行，就会重新渲染视图
+
+> 20210511
+- 批处理更新操作

@@ -1,5 +1,7 @@
 import { popTarget, pushTarget } from "./dep";
+import { queueWatcher } from "./schedular";
 
+// watcher 是渲染视图的
 let id = 0;
 class Watcher{
     constructor(vm,exprOrFn,cb,options){
@@ -26,8 +28,13 @@ class Watcher{
             dep.addSub(this);
         }
     }
-    update(){
+    run(){ // 真正的执行
         this.get();
+    }
+    update(){ // 如果多次更新 应该触发一次
+        // this.get();
+       
+        queueWatcher(this)
     }
     // 当属性取值时 需要记住这个watcher，稍后数据变化率，去执行自己记住的watcher即可
 }

@@ -58,7 +58,22 @@
         setTimeout(()=>{
             vm.name = 'ggg';
             vm.age = 22;
+            vm.name = 'gggggg';
+            vm.name = 'ggggggg';
+
+            console.log(vm.$options.el.innerHTML);// 异步渲染的拿到的不是最新的 => nextTick
+
+            setTimeout(()=>{
+                console.log(vm.$options.el.innerHTML);
+            })
+
+            console.log(vm)
+
+            vm.$nextTick(()=>{
+                console.log(vm.$options.el.innerHTML);
+            })
         },1000)
+        vm.address = "Shanxi"
     </script>
 </body>
 </html>
