@@ -36,7 +36,7 @@ class Observer{
 
 function defineReactive(target,key,value){
     observe(value); // 深层监控
-    let dep = new Dep(); // 每次都会给属性创建一个dep
+    let dep = new Dep(); // 每次都会给属性创建一个dep，每个属性都有dep
     Object.defineProperty(target,key,{ // 需要给每个属性都增加一个dep
         get(){
             if(Dep.target){

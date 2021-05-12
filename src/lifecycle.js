@@ -1,5 +1,5 @@
 import { patch } from "./vdom/patch";
-import Watcher from "./watcher"
+import Watcher from "./observer/watcher"
 
 export function lifecycleMixin(Vue){
     // 将虚拟节点转为真实的dom

@@ -17,7 +17,7 @@ class Watcher{
     }
     get(){ // 这个方法中会对属性进行取值操作
         pushTarget(this); // 取值的时候 Dep.target 就有值了
-        this.getter(); // 会取值
+        this.getter(); // 真正的渲染的时候 会取值
         popTarget();
     }
     addDep(dep){
@@ -28,15 +28,15 @@ class Watcher{
             dep.addSub(this);
         }
     }
-    run(){ // 真正的执行
+    run(){ // 真正执行代码
         this.get();
     }
-    update(){ // 如果多次更新 应该触发一次
+    update(){ // 如果多次更新 应该合并成一次
         // this.get();
        
         queueWatcher(this)
     }
-    // 当属性取值时 需要记住这个watcher，稍后数据变化率，去执行自己记住的watcher即可
+    // 当属性取值时 需要记住这个watcher，稍后数据变化了，去执行自己记住的watcher即可
 }
 
 export default Watcher
