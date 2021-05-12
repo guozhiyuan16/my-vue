@@ -39,4 +39,9 @@
     - 设置值得时候通知dep中记录的watcher让其执行，就会重新渲染视图
 
 > 20210511
-- 批处理更新操作
+- 批处理更新操作 (多次改变值应该只更新最后一次)
+    - 在watcher 的update方法中调用 queueWatcher并且参数是watcher本身
+    - queueWatcher 中 维护一个 queue 并且把watchr 加入到队列并且去重
+    - 通过nextTick 把 一个循环执行watcher 的方法加入到队列中 （nextTick内部也会维护一个队列）
+    - 在页面操作时也可以通过 nextTick 来 加入一些异步执行的方法
+    - 最后在同步执行完成后 把nextTick中的calbacks 依次执行
