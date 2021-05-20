@@ -10,7 +10,7 @@ class Watcher{
         this.options = options;
         this.id = id ++;
 
-        this.getter = exprOrFn;
+        this.getter = exprOrFn; // 调用组件渲染
         this.deps = [];
         this.depsId = new Set();
         this.get(); // 调用传入的函数   调用了render方法，此时会对模板中的数据进行取值

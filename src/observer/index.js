@@ -3,7 +3,7 @@ import Dep from "./dep";
 // 专门用来监控数据变化的类
 class Observer{
     constructor(value){
-        // value.__ob__ = this; 这种写法每个值都加了一个对象，会导致死循环
+        // value.__ob__ = this; 这种写法每个值都加了一个对象, 对象深层监控 ,会导致死循环
 
         // 给每个值加一个__ob__指向这个类
         Object.defineProperty(value,'__ob__',{
@@ -21,7 +21,7 @@ class Observer{
             this.walk(value);
         }
     }
-    observeArray(value){
+    observeArray(value){ // 数组的每一项都 observer 所以效率低
         value.forEach(val=>{
             observe(val)
         })

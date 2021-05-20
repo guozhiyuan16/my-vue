@@ -2,7 +2,7 @@ import { observe } from './observer/index';
 
 export function initState(vm){
     const opts = vm.$options;
-    if(opts.data){
+    if(opts.data){ // 有传递data 需要 对数据进行劫持
         initData(vm)
     }
 }

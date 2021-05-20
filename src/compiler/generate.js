@@ -76,7 +76,6 @@ function genChildren(el){
 
 // 遍历树 将树拼接成字符串
 export function generate(el){ 
-
     let children = genChildren(el)
 
     let code = `_c("${el.tag}",${

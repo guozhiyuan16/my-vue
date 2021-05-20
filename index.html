@@ -33,7 +33,7 @@
             data(){
                 return {
                     name:'gzy',
-                    // arr:[{a:1}]
+                    arr:[{a:1}],
                     age:10,
                     address:'Beijing'
                 }
@@ -42,8 +42,8 @@
         // vm.info = {
         //     a : 1
         // }
-        // vm.arr.push(5);
-        // vm.arr.push({b:2}); // 对push的对象也要监控
+        //  vm.arr.push(5);
+        //  vm.arr.push({b:2}); // 对push的对象也要监控
 
         // console.log('vm',vm);
         // console.log('----------------------------')
@@ -52,18 +52,20 @@
         // 希望数据更新自动更新视图，而不是用户手动触发
         //vm.address = "ggg"
         //vm._update(vm._render()) // 强制更新的方法
+        
+        // setTimeout(()=>{
+        //     vm.name = 'ggg';
+        //     vm.age = 22;
+        //     vm.name = 'gggggg';
+        //     vm.name = 'ggggggg';
 
-        setTimeout(()=>{
-            vm.name = 'ggg';
-            vm.age = 22;
-            vm.name = 'gggggg';
-            vm.name = 'ggggggg';
+        //     vm.$nextTick(()=>{
+        //         console.log(vm.$options.el.innerHTML);
+        //     })
+        // },1000)
+        // vm.address = "Shanxi"
 
-            vm.$nextTick(()=>{
-                console.log(vm.$options.el.innerHTML);
-            })
-        },1000)
-        vm.address = "Shanxi"
+        vm.name = 'haha';
     </script>
 </body>
 </html>

@@ -15,4 +15,6 @@ export function compileToFunctions(template){
     let fn = new Function(render); // 把一个字符串变成一个函数
     
     return fn
+
+    // html=> ast（只能描述语法 语法不存在的属性无法描述） => render函数 + (with + new Function) => 虚拟dom （增加额外的属性） => 生成真实dom
 }

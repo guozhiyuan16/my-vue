@@ -101,7 +101,7 @@ export function parseHtml(html){
                 continue;
             }
 
-            const endTagMatch = html. match(endTag);
+            const endTagMatch = html.match(endTag);
             if(endTagMatch){
                 advance(endTagMatch[0].length);
                 end(endTagMatch[1])

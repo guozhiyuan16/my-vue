@@ -5,12 +5,12 @@ import { nextTick } from './util';
 export function initMixin(Vue){
 
     Vue.prototype._init = function(options){
-        const vm = this;
+        const vm = this; // vm 是 Vue的实例
         vm.$options = options;
 
         // 初始化状态（将数据做一个初始化的劫持 当数据改变更新视图）
         // 对数据进行初始化 watch computed props data
-        initState(vm);
+        initState(vm); // 传递的是vm 此时vm已经挂在了 options
 
         if(vm.$options.el){
             vm.$mount(vm.$options.el)

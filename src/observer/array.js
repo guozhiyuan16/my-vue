@@ -19,7 +19,8 @@ methods.forEach(method=>{
     arrayMethods[method] = function(...args){
         let result = oldArrayMethods[method].apply(this,args);
         let insert;
-        let ob = this.__ob__; // 这次this 是监控的那个数组
+        let ob = this.__ob__; // 这个this 是监控的那个数组
+       
         switch (method){
             case "push":
             case "unshift":
