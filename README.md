@@ -45,3 +45,5 @@
     - 通过nextTick 把 一个循环执行watcher 的方法加入到队列中 （nextTick内部也会维护一个队列）
     - 在页面操作时也可以通过 nextTick 来 加入一些异步执行的方法
     - 最后在同步执行完成后 把nextTick中的calbacks 依次执行
+
+- 数组的依赖收集

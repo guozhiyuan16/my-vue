@@ -33,6 +33,9 @@ methods.forEach(method=>{
                 break;
         }
         if(insert) ob.observeArray(insert) // 数组新增的值有可能是对象 也需要深层监控 （调用 Observe中的 arrayObserve 监控）
+
+        // 数组的observer.dep 属性
+        ob.dep.notify();
         return result;
     }
 })
