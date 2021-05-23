@@ -34,4 +34,5 @@
     - 最后在同步执行完成后 把nextTick中的calbacks 依次执行
 
 - 数组的依赖收集
-- Vue.mixin & 生命周期的原理
+- Vue.mixin & 生命周期的合并策略
+- 组件的合并策略
