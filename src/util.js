@@ -19,3 +19,62 @@ export function nextTick(cb){
     }
     
 }
+
+export const isObject = val => typeof val == 'object' && val != null;
+
+const LIFECYCLE_HOOKS = [
+    'beforeCreate',
+    'created',
+    'beforeMount',
+    'mounted'
+]
+const strats = {};
+
+function mergeHook(parentVal,childVal){
+    if(childVal){
+        if(parentVal){
+            return parentVal.concat(childVal); // 两个钩子变成数组结构
+        }else{ // 子有父没有
+            return [childVal]
+        }
+    }else{
+        return parentVal; // 儿子没有直接采用付清
+    }
+}
+
+LIFECYCLE_HOOKS.forEach(hook=>{
+    strats[hook] = mergeHook;
+})
+
+export function mergeOptions(parent,child){
+    const options = {};
+    
+    for(let key in parent){
+        mergeField(key);
+    }
+
+    for(let key in child){
+        if(!parent.hasOwnProperty(key)){
+            mergeField[key];
+        }
+    }
+
+    function mergeField(key){
+        // 策略模式
+        if(strats[key]){
+            return options[key] = strats[key](parent[key],child[key])
+        }
+
+        if(isObject(parent[key]) && isObject(child[key])){
+            options[key] = {...parent[key],...child[key]}
+        }else{
+            if(child[key]){
+                options[key] = child[key];
+            }else{
+                options[key] = parent[key];
+            }
+        }
+    }
+    return options;
+}
+

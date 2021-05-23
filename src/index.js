@@ -1,7 +1,7 @@
 import { initMixin } from './init'
 import { lifecycleMixin } from './lifecycle';
 import { renderMixin } from './render';
-
+import { initGlobalAPI } from './global-api/index';
 
 function Vue(options){
     // options 为用户传入的参数
@@ -12,5 +12,6 @@ function Vue(options){
 initMixin(Vue); // 扩展初始化方法
 lifecycleMixin(Vue); // 扩展_update方法
 renderMixin(Vue); // 扩展_render方法
+initGlobalAPI(Vue);
 
 export default Vue

@@ -27,23 +27,47 @@
     </div> -->
     <div id="app">
         <ul>
-            <li>{{ arr[0] }}</li>
+            <li></li>
         </ul>
     </div>
     
     <script src="dist/vue.js"></script>
     <script>
+        Vue.mixin({
+            a:1,
+            beforeCreate(){ // 组件创建之前
+                console.log('beforeCreate1');
+            },
+            created(){ // 数据已经被劫持
+                console.log('created1');
+            },
+        })
+        Vue.mixin({
+            b:2,
+            beforeCreate(){ // 组件创建之前
+                console.log('beforeCreate2');
+            },
+            created(){ // 数据已经被劫持
+                console.log('created2');
+            },
+        })
         let vm = new Vue({
             el:"#app",
             data(){
                 return {
-                    // name:'gzy',
+                     name:'gzy',
                     // arr:[{a:1}],
                     // age:10,
                     // address:'Beijing'
-                    arr:[[1,2,3,4]]
+                    // arr:[[1,2,3,4]]
                 }
-            }
+            },
+            beforeCreate(){ // 组件创建之前
+                console.log('beforeCreate3');
+            },
+            created(){ // 数据已经被劫持
+                console.log('created3');
+            },
         })
         // vm.info = {
         //     a : 1
@@ -71,7 +95,8 @@
         // },1000)
         // vm.address = "Shanxi"
 
-        vm.arr[0].push(5)
+        // vm.arr[0].push(5)
+
     </script>
 </body>
 </html>
