@@ -30,6 +30,9 @@ const LIFECYCLE_HOOKS = [
 ]
 const strats = {};
 
+// strats.computed = function() {}
+// strats.watch = function() {}
+
 function mergeHook(parentVal,childVal){
     if(childVal){
         if(parentVal){
@@ -38,7 +41,7 @@ function mergeHook(parentVal,childVal){
             return [childVal]
         }
     }else{
-        return parentVal; // 儿子没有直接采用付清
+        return parentVal; // 儿子没有直接采用父亲
     }
 }
 
