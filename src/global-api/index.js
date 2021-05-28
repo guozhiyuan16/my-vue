@@ -8,7 +8,7 @@ export function initGlobalAPI(Vue){
         return this; // 多次mixin链式调用
     }
 
-    Vue.options._base = Vue; // Vue 的构造函数
+    Vue.options._base = Vue; // Vue 的构造函数 (用来保证this指向)
     Vue.options.components = {}; // 用来存放组件的定义
     Vue.component = function(id,definition){
         definition.name = definition.name || id;  // definition.name 优先级大于 id
@@ -22,7 +22,7 @@ export function initGlobalAPI(Vue){
             this._init(options)
         }
         Sub.prototype = Object.create(Super.prototype);
-        Sub.prototype.constuctor = Sub;
+        Sub.prototype.constructor = Sub;
         Sub.component = Super.component;
 
         // 每次声明一次组件 都会把父级的定义放到自己身上

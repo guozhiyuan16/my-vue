@@ -12,6 +12,6 @@ function Vue(options){
 initMixin(Vue); // 扩展初始化方法
 lifecycleMixin(Vue); // 扩展_update方法
 renderMixin(Vue); // 扩展_render方法
-initGlobalAPI(Vue);
+initGlobalAPI(Vue); // 扩展Vue构造函数上的方法
 
-export default Vue
+export default Vue;
