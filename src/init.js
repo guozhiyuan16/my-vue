@@ -8,7 +8,7 @@ export function initMixin(Vue){
         const vm = this; // vm 是 Vue的实例
         // vm.$options = options;
         vm.$options = mergeOptions(vm.constructor.options,options); // 把用户传入的options 和 mixin 合并
-
+        console.log(vm.$options)
         // 初始化状态（将数据做一个初始化的劫持 当数据改变更新视图）
         // 对数据进行初始化 watch computed props data
         callHook(vm,'beforeCreate')

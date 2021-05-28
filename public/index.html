@@ -8,9 +8,9 @@
 </head>
 <body>
     <div id="app">
-        <ul>
-            <li></li>
-        </ul>
+        <my-button></my-button>
+        <my-button></my-button>
+        <my-button></my-button>
     </div>
     
     <script src="../dist/vue.js"></script>
@@ -22,9 +22,9 @@
         // 先查找自己身上是否存在，没有在找父级 __proto__ Object.create
         let vm = new Vue({
             el:"#app",
-            conponents:{
+            components:{
                 'my-button':{
-                    template:'<button>按钮</button'
+                    template:'<button>内部按钮</button'
                 }
             }
         })
