@@ -4,11 +4,12 @@ import { callHook, mountComponent } from './lifecycle';
 import { mergeOptions, nextTick } from './util';
 export function initMixin(Vue){
 
+    // Vue 如何渲染 1.ast  2.render 3.vnode(不应该是my-button)
     Vue.prototype._init = function(options){
         const vm = this; // vm 是 Vue的实例
         // vm.$options = options;
         vm.$options = mergeOptions(vm.constructor.options,options); // 把用户传入的options 和 mixin 合并
-        console.log(vm.$options)
+        
         // 初始化状态（将数据做一个初始化的劫持 当数据改变更新视图）
         // 对数据进行初始化 watch computed props data
         callHook(vm,'beforeCreate')
@@ -23,7 +24,7 @@ export function initMixin(Vue){
     Vue.prototype.$nextTick = nextTick;
 
     Vue.prototype.$mount = function(el){
-        el = document.querySelector(el);
+        el = el && document.querySelector(el);
         const vm = this;
         const options = vm.$options;
 
@@ -42,6 +43,6 @@ export function initMixin(Vue){
             options.render = render; // 保证render一定有
         }
 
-        mountComponent(vm,el);// 组件挂载
+        mountComponent(vm);// 组件挂载
     }
 }

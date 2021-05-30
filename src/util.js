@@ -91,3 +91,13 @@ export function mergeOptions(parent,child){
     return options;
 }
 
+function makeUp(str){
+    const map = {}; // 创建一个映射表通过表查找比数组效率高？
+    str.split(',').forEach(tagName=>{
+        map[tagName] = true;
+    })
+    
+    return (tag) => map[tag] || false;
+}
+
+export const isReservedTag = makeUp('a,p,div,ul,li')

@@ -21,7 +21,7 @@ export function callHook(vm,hook){
     }
 }
 
-export function mountComponent(vm,el){
+export function mountComponent(vm){
     // 默认vue 是通过watcher来渲染的  渲染watcher （每一个组件都有一个渲染watcher）
 
     let updateComponent = ()=>{
