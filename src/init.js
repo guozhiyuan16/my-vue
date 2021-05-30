@@ -38,7 +38,8 @@ export function initMixin(Vue){
             if(!template && el){
                 template = el.outerHTML;
             }
-            // 如何将模板编译成render函数
+            // template => render方法
+            // 1.处理模板变为ast树 2.标记静态节点 3.codegen=>return 字符串 4.new Function + with (render函数)
             const render = compileToFunctions(template);
             options.render = render; // 保证render一定有
         }

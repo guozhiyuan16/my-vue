@@ -10,7 +10,8 @@ export function lifecycleMixin(Vue){
        // patch 初始化渲染的时候，会创建一个新节点并将老节点删掉
        // vm.$el = patch(vm.$options.el,vnode)
 
-        vm.$el = patch(vm.$el,vnode) // 第一次渲染完毕后，拿到新的节点，下次再次渲染时替换上次渲染的结果  性能差
+       // 第一次渲染完毕后，拿到新的节点，下次再次渲染时替换上次渲染的结果  性能差
+        vm.$el = patch(vm.$el,vnode)  // 组件低啊用patch方法后会产生$el属性
     }
 } 
 
