@@ -14,10 +14,10 @@ function createComponent(vm,tag,data,key,children,Ctor){
     if(isObject(Ctor)){
         Ctor = vm.$options._base.extend(Ctor); // 到这来Ctor一定是构造函数
     }
+    console.log(Ctor)
     // 给组件增加生命周期
     data.hook = {
         init(vnode){ // 初始化的钩子
-            debugger;
             // 调用子组件的构造函数,不能直接取是因为圆满都拆分了
             let child = vnode.componentInstance = new vnode.componentOptions.Ctor({});
 

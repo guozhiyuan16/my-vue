@@ -11,7 +11,7 @@ export function lifecycleMixin(Vue){
        // vm.$el = patch(vm.$options.el,vnode)
 
        // 第一次渲染完毕后，拿到新的节点，下次再次渲染时替换上次渲染的结果  性能差
-        vm.$el = patch(vm.$el,vnode)  // 组件低啊用patch方法后会产生$el属性
+        vm.$el = patch(vm.$el,vnode)  // 组件渲染用patch方法后会产生$el属性
     }
 } 
 
