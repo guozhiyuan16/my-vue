@@ -53,7 +53,7 @@ function defineReactive(target,key,value){
         get(){
             if(Dep.target){
                 dep.depend(); // 让这个属性自己的dep记住这个watcher，也要让watcher记住这个dep
-
+                
                 if(childOb){ // 可能是数组 可能是对象，对象也要收集依赖，后续写$set方法时需要触发他自己的更新操作
                     childOb.dep.depend();   // 就是让数组和对象也记录watcher
 
@@ -79,7 +79,7 @@ function defineReactive(target,key,value){
 export function observe(data){
     // 对象才监测
     if(typeof data!= 'object' || data == null){
-        return data;
+        return; // 如果是普通值直接返回（不能返回data）
     }
     if(data.__ob__){ // 有__ob__说明已经被监测过了，防止循环引用
         return data; 
