@@ -1,10 +1,12 @@
 export function patch(oldVnode,vnode){ // oldVnode 是一个真实的元素
-    if(!oldVnode){ // 没有olaVode 直接创建
+    // 1.组件oldVnode是 null (调用了$mount没传参)
+    if(!oldVnode){ // 没有olaVode 直接创建 (组件)
         return createElm(vnode); // 根据虚拟节点创建元素
     }
+
     const isRealElement = oldVnode.nodeType;
+    // 2. 初次渲染 oldVnode是一个真实dom
     if(isRealElement){
-        // 初次渲染
         const oldElm = oldVnode; // id="app"
         const parentElm = oldElm.parentNode;// body
         let el = createElm(vnode); // 根据虚拟节点创建真实的节点
@@ -13,7 +15,83 @@ export function patch(oldVnode,vnode){ // oldVnode 是一个真实的元素
 
         return el // vm.$el
     }else{
-        // diff算法
+        // 3.diff算法 两个虚拟节点的比对
+        // 1）如果两个虚拟节点的标签不一致 那就直接替换
+        if(oldVnode.tag!= vnode.tag){
+            return oldVnode.el.parentNode.replaceChild(createElm(vnode),oldVnode.el);   
+        }
+        // 2) 标签一样但是是两个文本元素
+        if(!oldVnode.tag){ // 标签相同而且是文本
+            if(oldVnode.text !== vnode.text){
+               return oldVnode.el.textContent = vnode.text; 
+            }
+        }
+        // 3) 元素相同 复用老节点，并且更新属性
+        let el =  vnode.el = oldVnode.el;
+        updatePropertise(vnode,oldVnode.data); // 老的属性和新的虚拟节点比对
+
+        // 4) 更新儿子   
+        let oldChildren = oldVnode.children || [];
+        let newChildren = vnode.children || [];
+
+       
+        if(oldVnode.length > 0 && newChildren.length > 0){
+            //  A. 老的有儿子新的也有儿子 dom-diff
+            updateChildren(el,oldChildren,newChildren)
+        }else if(oldChildren.length > 0){
+            //  B. 老的有儿子 新的没儿子 => 删除老的儿子
+            el.innerHTML = '';
+        }else if(newChildren.length > 0){
+            //  C. 新的有儿子 老的没儿子 => 在老的节点上增加儿子即可 
+
+            newChildren.forEach(child=>el.appendChild(createElm(child)))
+        }
+    }
+}
+
+function updateChildren(parent,oldChildren,newChildren){
+    let oldStartIndex = 0; // 老的头索引
+    let oldEndIndex = oldChildren.length -1; // 老的尾索引
+    let oldStartVnode = oldChildren[0]; // 老的开始节点
+    let oldEndVnode = oldChildren[oldEndIndex]; // 老的结束节点
+
+    let newStartIndex = 0; // 新的头索引
+    let newEndIndex = newChildren.length -1; // 新的尾索引
+    let newStartVnode = newChildren[0]; // 新的开始节点
+    let newEndVnode = newChildren[newEndIndex]; // 新的结束节点
+
+}
+
+function updatePropertise(vnode,oldProps = {}){
+    let newProps = vnode.data || {}; // 属性
+    let el = vnode.el; // 当前的真实元素
+
+    // 1.老的属性 新的没有 删除属性
+    for(let key in oldProps){
+        if(!newProps[key]){
+            el.removeAttribute(key);
+        }
+    }
+
+    let newStyle = newProps.style || {};
+    let oldStyle = oldProps.style || {};
+    for(let key in oldStyle){ // 判断样式新老先比对
+        if(!newStyle[key]){
+            el.style[key] = '';
+        }
+    }
+
+    // 2. 新的属性老的没有,直接用新的覆盖，不考虑有没有
+    for(let key in newProps){
+        if(key == 'style'){
+            for(let styleName in newProps.style){
+                el.style[styleName] = newProps.style[styleName]
+            }
+        }else if(key === 'class'){
+            el.className = newProps.class;
+        }else{
+            el.setAttribute(key,newProps[key])
+        }
     }
 }
 
@@ -29,7 +107,8 @@ function createComponent(vnode){
     return false;
 }
 
-function createElm(vnode){
+// 根据虚拟节点创建一个真实的元素
+export function createElm(vnode){
     let { tag, children, key, data, text, vm  } = vnode;
 
     if(typeof tag === 'string'){ // 两种可能 可能是一个组件
@@ -52,22 +131,4 @@ function createElm(vnode){
     }
 
     return vnode.el;
-}
-
-
-function updatePropertise(vnode){
-    let newProps = vnode.data || {}; // 属性
-    let el = vnode.el;
-
-    for(let key in newProps){
-        if(key == 'style'){
-            for(let styleName in newProps.style){
-                el.style[styleName] = newProps.style[styleName]
-            }
-        }else if(key === 'class'){
-            el.className = newProps.class;
-        }else{
-            el.setAttribute(key,newProps[key])
-        }
-    }
 }
