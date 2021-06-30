@@ -49,6 +49,7 @@ export function patch(oldVnode,vnode){ // oldVnode 是一个真实的元素
     }
 }
 
+// 更新子节点
 function updateChildren(parent,oldChildren,newChildren){
     let oldStartIndex = 0; // 老的头索引
     let oldEndIndex = oldChildren.length -1; // 老的尾索引
