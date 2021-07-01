@@ -17,17 +17,18 @@ export function patch(oldVnode,vnode){ // oldVnode 是一个真实的元素
     }else{
         // 3.diff算法 两个虚拟节点的比对
         // 1）如果两个虚拟节点的标签不一致 那就直接替换
-        if(oldVnode.tag!= vnode.tag){
+        console.log(oldVnode,vnode)
+        if(oldVnode.tag !== vnode.tag){
             return oldVnode.el.parentNode.replaceChild(createElm(vnode),oldVnode.el);   
         }
-        // 2) 标签一样但是是两个文本元素
+        // 2) 标签一样但是是两个文本元素 { tag:undefined,text}
         if(!oldVnode.tag){ // 标签相同而且是文本
             if(oldVnode.text !== vnode.text){
                return oldVnode.el.textContent = vnode.text; 
             }
         }
         // 3) 元素相同 复用老节点，并且更新属性
-        let el =  vnode.el = oldVnode.el;
+        let el = vnode.el = oldVnode.el; // 复用的是真实节点
         updatePropertise(vnode,oldVnode.data); // 老的属性和新的虚拟节点比对
 
         // 4) 更新儿子   

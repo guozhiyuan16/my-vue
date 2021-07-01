@@ -29,10 +29,10 @@ document.body.appendChild(el);
 
 let vm2 = new Vue({
     data(){
-        return { name:'z' }
+        return { age:'z' }
     }
 });
-let render2 = compileToFunctions(`<div id="b" b="2" style="background:red">{{name}}</div>`); // 模板编译成render函数
+let render2 = compileToFunctions(`<div id="b" b="1" style="color:green">{{age}}</div>`); // 模板编译成render函数
 let newVnode = render2.call(vm2); // 老的虚拟节点
 
 setTimeout(()=>{
