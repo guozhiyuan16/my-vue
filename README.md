@@ -33,6 +33,7 @@ export function initMixin(Vue){
 ### Vue 对象的`深层监控`（`数据劫持`）
 
 #### 对象的`响应式`实现
+
 - 初始化时调用 initState(vm)
 
 ```js
@@ -197,6 +198,49 @@ class Observer{
 }
 
 ```
+
+### `template模板编译`实现
+
+#### 模板查找顺序
+
+- `render` 有render直接使用
+- `template` 没有render看template
+- 最后是`el找html找外部模板`
+
+```js
+// -init.js
+export function initMixin(Vue){
+    Vue.prototype._init = function(options){
+        ...
+        if(vm.$options.el){
+            vm.$mount(vm.$options.el)
+        }
+    }
+    Vue.prototype.$mount = function(el){
+        el = el && document.querySelector(el);
+        const vm = this;
+        const options = vm.$options;
+
+        vm.$el = el;
+        if(!options.render){
+            let template = options.template;
+            if(!template && el){
+                template = el.outerHTML;
+            }
+            // template => render方法
+            // 1.处理模板变为ast树 2.标记静态节点 3.codegen=>return 字符串 4.new Function + with (render函数)
+            const render = compileToFunctions(template);
+            options.render = render; // 保证render一定有
+        }
+
+        mountComponent(vm);// 组件挂载
+    }
+}
+
+```
+
+#### `compileToFunctions`实现
+
 
 - 模板渲染的实现
 - 模板查找的顺序机制
