@@ -144,9 +144,25 @@ let methods = [
 
 methods.forEach(method => {
     arrayMethods[method] = funtions(...args){
-        // ... todo
-        
-        oldArrayMethods[method].call(this,args); // 数组老的方法
+        let result = oldArrayMethods[method].call(this,args); // 数组老的方法
+        // 新插入数组中的值也需要变成响应式 => 调用Observer中的observeArray
+        let insert;
+        let ob = this.__ob__;
+
+        switch (method){
+            case "push":
+            case "unshift":
+                insert = args;
+                break;
+            case "splice":
+                insert = args.slice(2); // 第三个以后是新增的
+                break;
+            default:
+                break;
+        }
+        if(insert) ob.observeArray(insert) // 数组新增的值有可能是对象 也需要深层监控 （调用 Observe中的 arrayObserve 监控）
+
+        return result
     }
 })
 
@@ -156,11 +172,17 @@ import { arrayMethods } from './array.js'
 
 class Observer{
     constructor(value){
+        // 给每个值增加__ob__指向Observer这个类（方便value通过__ob__调用observeArray方法）
+        Object.defineProperty(value,'__ob__',{
+            value:this,
+            enumerable:false, // 不可枚举，防止被循环出来
+            configurable:false
+        })
         // 如果是数组的话如果数组长度很长每个都监控很费时间
         if(Array.isArray(value)){
             
             value.__proto__ = arrayMethods; // 数组的原型指向修改后的那些方法
-
+            // Object.setPrototypeOf(value,arrayMethods);
             this.observeArray(value); // 数组中的对象变化了也需要监控
         }else{
             this.walk(value);
@@ -211,3 +233,5 @@ class Observer{
 ## Question 
 
 - Object.create() 实现原理
+- AST语法树和虚拟dom的关系
+- 
