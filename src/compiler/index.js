@@ -1,6 +1,6 @@
 
 import { parseHtml } from './parse';
-import { generate } from './generate'
+import { generate } from './generate';
 
 export function compileToFunctions(template){
     // 生成 ast 语法树
