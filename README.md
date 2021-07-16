@@ -201,11 +201,12 @@ class Observer{
 
 ### `模板编译` 流程
 
-- dom 转化为 ast 语法树的实现
-- ast 转化为 虚拟dom
-- 生成render函数
-- render函数转化成虚拟dom
-- 虚拟dom渲染到页面
+- 模板变成render方法
+  - parseHtml 变成ast语法树
+  - generate 变成虚拟dom
+- render 使用 with去 实例上取值
+- 虚拟dom变为对象(可以描述dom结构)
+- 生成一个真实的dom扔到页面中
 
 #### 模板`查找顺序`
 
