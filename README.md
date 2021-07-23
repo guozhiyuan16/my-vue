@@ -199,16 +199,14 @@ class Observer{
 
 ```
 
-### `模板编译` 流程
+### `初渲染` 流程
 
-- 模板变成render方法
-  - parseHtml 变成ast语法树
-  - generate 变成虚拟dom
-- render 使用 with去 实例上取值
-- 虚拟dom变为对象(可以描述dom结构)
-- 生成一个真实的dom扔到页面中
+- template模板 => ast 语法树（描述语法的）=> render 函数 => 虚拟dom
+- new Vue时会产生一个watcher(渲染watcher) vm._update(vm._render()) 创建真实节点
 
-#### 模板`查找顺序`
+#### 获取`template`模板
+
+> `模板查找顺序`
 
 - `render` 有render直接使用
 - `template` 没有render看template
@@ -234,23 +232,26 @@ export function initMixin(Vue){
             if(!template && el){
                 template = el.outerHTML;
             }
-            // template => render方法
-            // 1.处理模板变为ast树 2.标记静态节点 3.codegen=>return 字符串 4.new Function + with (render函数)
-            const render = compileToFunctions(template);
-            options.render = render; // 保证render一定有
+            ...
         }
-
-        mountComponent(vm);// 组件挂载
+        ...
     }
 }
 
 ```
 
-#### `compileToFunctions`
+#### 模板编译成`render`函数
 
-> 生成`render`函数
+> 生成`compileToFunctions`函数主要流程
+
+- 模板编译成render函数
+  - `parseHtml` 生成ast语法树
+  - `generate` 变为一个_c("div",{a:1},_c())
+  - 使用with包裹生成的字符串 `with(this){return ${code}}` (渲染的时候去实例取值)
+  - `return new Function(str)`
 
 ```js
+// - compiler/index.js
 import { parseHtml } from './parse';
 import { generate } from './generate';
 
@@ -273,29 +274,43 @@ export function compileToFunctions(template){
 
 ```
 
-##### `parseHtml`
-
-> template`模板`转化为`ast语法树`
+> `render`函数挂在到 vm.options上
 
 ```js
+// - init.js
+import { mountComponent } from './lifecycle';
 
+export function initMixin(Vue){
+    ...
+
+    Vue.prototype.$mount = function (el){
+        el = el && document.querySelector(el);
+        const vm = this;
+        const options = vm.$options;
+        
+        vm.$el = el;
+
+        if(!options.render){
+            let template = options.template;
+            if(!template && el){
+                template = el.outerHTML;
+            }
+            // template => render方法
+            // 1.处理模板变为ast树 2.标记静态节点 3.codegen=>return 字符串 4.new Function + with (render函数)
+            const render = compileToFunctions(template);
+            options.render = render; // 保证render一定有
+        }
+
+        mountComponent(vm);// 组件挂载
+    }
+}
 
 ```
 
-##### `generate`
+#### render函数生成`虚拟dom`
 
-> `ast`转化为`虚拟dom`
+#### 虚拟dom`patch`渲染到页面
 
-```js
-
-
-```
-
-### `初渲染` 流程
-
-- 对数据进行拦截 对象 数组 （依赖收集）
-- template模板 => ast 语法树（描述语法的）=> render 函数 => 虚拟dom
-- new Vue时会产生一个watcher(渲染watcher) vm._update(vm._render()) 创建真实节点
 
 ### `依赖收集`
 
@@ -308,6 +323,7 @@ export function compileToFunctions(template){
 
 
 #### `数组的依赖收集`
+
 
 ### `批处理更新操作`
 
