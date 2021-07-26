@@ -14,8 +14,10 @@ export function renderMixin(Vue){
         const vm = this;
         let render =  vm.$options.render; // 获取编译后的render方法
         
+        console.log(render);
         let vnode = render.call(vm); // 调用render方法产生虚拟节点  (自动将值进行渲染)
-        
+        console.log(vnode);
+
         return vnode; // 这就是虚拟节点
         
     }

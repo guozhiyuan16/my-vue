@@ -64,7 +64,7 @@ function updateChildren(parent,oldChildren,newChildren){
 
 }
 
-function updatePropertise(vnode,oldProps = {}){
+function updateProperties(vnode,oldProps = {}){
     let newProps = vnode.data || {}; // 属性
     let el = vnode.el; // 当前的真实元素
 
@@ -124,7 +124,7 @@ export function createElm(vnode){
         }
 
         vnode.el = document.createElement(tag); // 用vue的指令时 可以通过vnode拿到真实的dom
-        updatePropertise(vnode);
+        updateProperties(vnode);
         children.forEach(child=>{
             vnode.el.appendChild(createElm(child))
         })

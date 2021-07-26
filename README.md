@@ -247,7 +247,7 @@ export function initMixin(Vue){
 - 模板编译成render函数
   - `parseHtml` 生成ast语法树
   - `generate` 变为一个_c("div",{a:1},_c())
-  - 使用with包裹生成的字符串 `with(this){return ${code}}` (渲染的时候去实例取值)
+  - 使用with包裹生成的字符串 let str = `with(this){return ${code}}` (渲染的时候去实例取值)
   - `return new Function(str)`
 
 ```js
@@ -309,12 +309,172 @@ export function initMixin(Vue){
 
 #### render函数生成`虚拟dom`
 
+- Vue 是通过`Watcher渲染`页面
+- Watcher 第二个参数是 `updateComponent` => vm._update(vm_render());
+- `vm._render 产生虚拟节点`
+- `vm._update 把虚拟节点渲染为真实节点`
+
+```js
+// -lifecycle.js
+import Watcher from './observer/watcher';
+
+export function mountComponent(vm){
+    // Watcher中会执行此方法
+    let updateComponent = () => {
+        vm._update(vm._render());
+    }
+    new Watcher(vm,updateComponent,()=>{},true);
+}
+
+```
+
+```js
+// -render.js
+
+import { createElement, createTextVnode } from "./vdom/index.js";
+
+export function renderMixin(Vue){
+    Vue.prototype._c = function(...args){ // 创建元素的虚拟节点
+        return createElement(this,...args);
+    }
+    Vue.prototype._v = function(text){ // 创建文本虚拟节点
+        return createTextVnode(this,text);
+    }
+    Vue.prototype._s = function(val){  // 转化成字符串
+        return val == null ?'':(typeof val == 'object')? JSON.stringify(val): val;
+    }
+    Vue.prototype._render = function(){
+        const vm = this;
+        let render = vm.$options.render; // 获取编译后的render方法
+
+        let vnode = render.call(vm); // 调用render方法产生虚拟节点 （会自动将值进行渲染）
+
+        render vnode; // 返回虚拟节点
+    }
+}
+
+// -vdom/index.js
+export function createElement(vm,tag,data= {},...children){
+    return vnode(vm,tag,data,data.key,children,undefined)
+}
+
+export function createTextVnode(vm,text){
+    return vnode(vm,undefined,undefined,undefined,undefined,text)
+}
+
+function vnode(vm,tag,data,key,children,text,componentOptions){
+    return { // 可以根据需求任意添加
+        vm,
+        tag,
+        data,
+        key,
+        children,
+        text,
+        componentOptions
+    }
+}
+
+```
+
+
 #### 虚拟dom`patch`渲染到页面
+
+- patch 分为`初渲染`和后续的`dom-diff`;
+
+
+```js
+// -lifecycle.js
+import { patch } from './vdom/patch';
+import Watcher from './observer/watcher';
+
+export function lifecycle(Vue){
+    Vue.prototype._update = function(vnode){
+        const vm = this;
+
+        // 通过patch吧虚拟节点转为真实节点
+        vm.$el = patch(vm.$el,vnode); //组件渲染用patch方法后会产生$el属性
+    }
+}
+
+export function mountComponent(vm){
+    // Watcher中会执行此方法
+    let updateComponent = () => {
+        vm._update(vm._render());
+    }
+    new Watcher(vm,updateComponent,()=>{},true);
+}
+
+// -vdom/patch.js
+export function patch(oldVnode,vnode){ // oldVnode 是一个真实元素
+    const isRealElement = oldVnode.nodeType;
+    if(isRealElement){
+        const oldElm = oldVnode; // id="app"
+        const parentElm = oldElm.parentNode;// body
+        let el = createElm(vnode); // 根据虚拟节点创建真实的节点
+        parentElm.insertBefore(el,oldElm.nextSibling); // 将创建的节点插到原有的节点的下一个
+        parentElm.removeChild(oldElm);// 删除原有的节点
+
+        return el // vm.$el
+    }else{
+        // dom-diff
+    }
+}
+
+function updateProperties(vnode,oldProps = {}){
+    let newProps = vnode.data || {}; // 属性
+    let el = vnode.el; // 当前的真实元素
+
+    // 1.老的属性 新的没有 删除属性
+    for(let key in oldProps){
+        if(!newProps[key]){
+            el.removeAttribute(key);
+        }
+    }
+
+    let newStyle = newProps.style || {};
+    let oldStyle = oldProps.style || {};
+    for(let key in oldStyle){ // 判断样式新老先比对
+        if(!newStyle[key]){
+            el.style[key] = '';
+        }
+    }
+
+    // 2. 新的属性老的没有,直接用新的覆盖，不考虑有没有
+    for(let key in newProps){
+        if(key == 'style'){
+            for(let styleName in newProps.style){
+                el.style[styleName] = newProps.style[styleName]
+            }
+        }else if(key === 'class'){
+            el.className = newProps.class;
+        }else{
+            el.setAttribute(key,newProps[key])
+        }
+    }
+}
+
+export function createElm(vnode){
+    let { tag,children, key, data, text, vm } = vnode;
+    
+    if(typeof tag === 'string'){
+        vnode.el = document.createElement(tag);
+        updateProperties(vnode); // 更新属性
+        children.forEach(child=>{
+            vnode.el.appendChild(createElm(child))； // 递归创建子元素
+        })
+    }else{
+        vnode.el = document.createTextNode(text)
+    }
+    return vnode.el;
+}
+
+```
 
 
 ### `依赖收集`
 
-> 依赖收集 （只有在dom中取过值的元素发生变化才触发视图刷新）
+> 依赖收集 （`只有在dom中取过值的元素发生变化才触发视图刷新`）
+> 本质上就是`data中的属性都绑定watch`，`属性变化时watch重新渲染`
 
 #### `对象的依赖收集`
 
@@ -343,7 +503,6 @@ export function initMixin(Vue){
 ### `组件的渲染原理` 
 
 ### `dom-diff`
-
 
 ## Question 
 
