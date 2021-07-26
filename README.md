@@ -1,8 +1,32 @@
 ## `Vue源码`
 
 ### `rollup` 基本配置
-- 打包文件
-- 启动服务
+> `打包文件` & `启动服务`
+ 
+```js
+import babel from 'rollup-plugin-babel'
+import serve from 'rollup-plugin-server'
+export default {
+    input:"./src/index.js",
+    output:{
+        format:'umd', // 支持amd commonjs window.Vue
+        file:"./dist/vue.js",
+        name:"Vue",
+        sourcemap:true
+    },
+    plugins:[
+        babel({
+            exclude:'node_modules/**'
+        }),
+        serve({
+            open:true,
+            port:3000,
+            contentBase:'',
+            openPage:'/index.html'
+        })
+    ]
+}
+```
 
 ### `如何在原型上扩展方法`
 
@@ -478,11 +502,153 @@ export function createElm(vnode){
 
 #### `对象的依赖收集`
 
-- 取值的时候给每个值新增一个dep,并且让dep记住这个watcher（也会让watcher记住dep，并且在watcher中去重）
-- 设置值得时候通知dep中记录的watcher让其执行，就会重新渲染视图
+- `取值的时候给每个值新增一个dep`,并且让`dep记住这个watcher`（也会让`watcher记住dep`，并且在watcher中去重）
+- `设置值`得时候通知dep中记录的`watcher执行`，就会重新渲染视图
 
+```js
+// observer/index.js
+...
+let childOb = observe(value); // 深层监控
+let dep = new Dep(); // 每次都会给属性创建一个dep，每个属性都有dep
+Object.defineProperty(target,key,{ // 需要给每个属性都增加一个dep
+    get(){
+        if(Dep.target){
+            dep.depend(); // 让这个属性自己的dep记住这个watcher，也要让watcher记住这个dep
+            
+            if(childOb){ // 可能是数组 可能是对象，对象也要收集依赖，后续写$set方法时需要触发他自己的更新操作
+                childOb.dep.depend();   // 就是让数组和对象也记录watcher
+
+                if(Array.isArray(value)){ // 取外层数组要将数组里面的也进行依赖收集
+                    dependArray(value);
+                }
+            }
+            
+        }
+        return value
+    },
+    set(newValue){
+        if(value!=newValue){
+            observe(newValue); // 直接赋值为一个新对象需要监控
+            value = newValue;
+
+            dep.notify();// 通知dep中记录的watcher让他去执行
+        }
+    }
+})
+...
+
+// observer/watcher.js
+import { popTarget,pushTarget } from './dep';
+
+let id = 0;
+class Watcher{
+    constructor(vm,exprOrFn,cb,options){
+        this.vm = vm;
+        this.cb = cb;
+        this.options = options;
+        this.id = id ++;
+
+        this.getter = exprOrFn; // 调用组件渲染
+        this.deps = [];
+        this.depsId = new Set();
+        this.get();
+    }
+    get(){
+        pushTarget(this); // 取值的时候有值，说明这个值对模板有依赖，改变才会更新视图
+        this.getter(); // 这个方法就是 mountComponent执行，会对属性进行取值操作
+        popTarget();
+    }
+    addDep(dep){ // watcher记住dep
+        let id = dep.id;
+        if(!this.depsId.has(id)){ // deps 去重
+            this.depsId.add(id);
+            this.deps.push(dep);
+            dep.addSub(this); // dep记住watcher
+        }
+    }
+    run(){ //调用此方法watcher重新渲染
+        this.get();
+    }
+    update(){ //暴露给dep调用watcher重新渲染
+        this.get();
+        // 这里会增加批处理相关操作，并不是watcher真正执行
+    }
+}
+
+// observer/dep.js
+let id = 0;
+class Dep{
+    constructor(){
+        this.id = id ++;
+        this.subs = []; // 用来记录watcher
+    }
+    depend(){
+        // watcher机制dep
+        Dep.target.addDep();
+    }
+    addSub(watcher){ // dep记住watcher
+        this.subs.push(watcher)
+    }
+    notify(){
+        this.subs.forEach(watcher => watcher.update())
+    }
+}
+Dep,target = null;
+
+export function pushTarget(watcher){
+    Dep.target = watcher;
+}
+
+export function popTarget(){
+    Dep.target = null;
+}
+
+export default Dep;
+
+```
 
 #### `数组的依赖收集`
+
+> 给`数组和对象本身增加dep属性`进行依赖收集
+
+```js
+// -observer/index.js
+import { arrayMethods } from './array.js'
+import Dep from "./dep";
+// 专门用来监控数据变化的类
+class Observer{
+    constructor(value){
+        this.dep = new Dep(); // 对象和数组也需要增加一个dep
+        ...
+    }
+}
+
+// -observer/array.js
+methods.forEach(method=>{
+    arrayMethods[method] = function(...args){
+        let result = oldArrayMethods[method].apply(this,args);
+        let insert;
+        let ob = this.__ob__; // 这个this 是监控的那个数组
+       
+        switch (method){
+            case "push":
+            case "unshift":
+                insert = args;
+                break;
+            case "splice":
+                insert = args.slice(2); // 第三个以后是新增的
+                break;
+            default:
+                break;
+        }
+        if(insert) ob.observeArray(insert) // 数组新增的值有可能是对象 也需要深层监控 （调用 Observe中的 arrayObserve 监控）
+
+        // 数组的observer.dep 属性
+        ob.dep.notify();
+        return result;
+    }
+})
+```
 
 
 ### `批处理更新操作`
@@ -493,7 +659,7 @@ export function createElm(vnode){
 - queueWatcher 中 维护一个 queue 并且把watchr 加入到队列并且去重
 - 通过nextTick 把 一个循环执行watcher 的方法加入到队列中 （nextTick内部也会维护一个队列）
 - 在页面操作时也可以通过 nextTick 来 加入一些异步执行的方法
-- 最后在同步执行完成后 把nextTick中的calbacks 依次执行
+- 最后在同步执行完成后 把nextTick中的callbacks 依次执行
 
 
 ### `Vue.mixin` & `生命周期的合并策略`
